@@ -1,0 +1,228 @@
+openapi: 3.0.2
+info:
+  title: 'Full list of API end points exposed by the SQL-joe backend'
+  version: 'v1'
+paths:
+  /api/v1/users/:
+    get:
+      operationId: listUsers
+      description: 'List all the registers users of the application'
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    id:
+                      type: integer
+                      readOnly: true
+                    username:
+                      type: string
+                      description: Required. 150 characters or fewer. Letters, digits
+                        and @/./+/-/_ only.
+                      pattern: ^[\w.@+-]+\Z
+                      maxLength: 150
+                    email:
+                      type: string
+                      format: email
+                      maxLength: 254
+  /api/v1/users/{id}/:
+    get:
+      operationId: RetrieveUser
+      description: 'Retrieve details of a specific user'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this user.
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  username:
+                    type: string
+                    description: Required. 150 characters or fewer. Letters, digits
+                      and @/./+/-/_ only.
+                    pattern: ^[\w.@+-]+\Z
+                    maxLength: 150
+                  email:
+                    type: string
+                    format: email
+                    maxLength: 254
+  /api/v1/database-connections/get-database-config/:
+    get:
+      operationId: RetrieveRemoteDatabaseConnections
+      description: 'Get the current database connection parameters'
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  host:
+                    type: string
+                    maxLength: 255
+                  port:
+                    type: integer
+                    maximum: 2147483647
+                    minimum: -2147483648
+                  database:
+                    type: string
+                    maxLength: 255
+                  user:
+                    type: string
+                    maxLength: 255
+                  password:
+                    type: string
+                    description: 'The returned password will be an encrypted string'
+  /api/v1/database-connections/get-status/:
+    get:
+      operationId: listGetConnectionStatus
+      description: 'Get the current connection status of the DB '
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  status:
+                    type: string
+                    maxLength: 255
+  /api/v1/dj-rest-auth/login/:
+    post:
+      operationId: CreateLogin
+      description: 'Check the credentials and return the REST Token'
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+              required:
+              - password
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  username:
+                    type: string
+                  email:
+                    type: string
+                    format: email
+                  password:
+                    type: string
+                required:
+                - password
+  /api/v1/database-connections/set-database-config/:
+    post:
+      operationId: CreateDatabaseConnection
+      description: 'Set the current database connection'
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                host:
+                  type: string
+                  maxLength: 255
+                port:
+                  type: integer
+                  maximum: 2147483647
+                  minimum: -2147483648
+                database:
+                  type: string
+                  maxLength: 255
+                user:
+                  type: string
+                  maxLength: 255
+                password:
+                  type: string
+              required:
+              - host
+              - port
+              - database
+              - user
+              - password
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  host:
+                    type: string
+                    maxLength: 255
+                  port:
+                    type: integer
+                    maximum: 2147483647
+                    minimum: -2147483648
+                  database:
+                    type: string
+                    maxLength: 255
+                  user:
+                    type: string
+                    maxLength: 255
+                  password:
+                    type: string
+                required:
+                - host
+                - port
+                - database
+                - user
+                - password
+  /api/v1/database-connections/query-remote-db/:
+    post:
+      operationId: CreateQueryRemoteDB
+      description: 'Submit a query to be executed by the remote DB'
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                query-string:
+                  type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  result:
+                    type: string
+  /api/v1/users/delete/{id}/:
+    delete:
+      operationId: DestroyUser
+      description: 'Delete the user of the passed id'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this user.
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
